@@ -13,9 +13,10 @@
 using namespace std;
 
 int main() {
-	Fl_Double_Window win(1600,900,"Draw X");
+	Fl_Double_Window win(1600,900,"Gates");
 	DrawStuff control(0, 0, win.w(), win.h());
-    win.resizable(control);
+	control.set_parent(&win);
+    win.resizable(win);
     win.show();
     return(Fl::run());
 }

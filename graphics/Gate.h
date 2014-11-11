@@ -50,7 +50,6 @@ public:
 		char a = 'A';
 		for (int i=0; i< output.size(); i++) {
 			if (output[i]) {
-				
 				a='1';
 			}
 			else {
@@ -60,6 +59,7 @@ public:
 		}
 	}
 	void set_output(vector<bool>* out) {
+		output.clear();
 		for (int i=0;i< (*out).size();++i) {
 			output.push_back((*out)[i]);
 		}
@@ -89,13 +89,14 @@ public:
 		fl_line_style(FL_SOLID, 4);
 		fl_line(Gate::Pos().x, Gate::Pos().y, Fl::w()-1, Gate::Pos().y);//Draw wire
 		
-		fl_color(fl_rgb_color(255,0,0));
-		fl_line_style(FL_SOLID, 2);
-		fl_line(Gate::Pos().x-23, Gate::Pos().y-3, Gate::Pos().x-23, (*input1).Pos().y);//Draw input1 wire
-		
 		fl_color(fl_rgb_color(0,190,0));
 		fl_line_style(FL_SOLID, 2);
-		fl_line(Gate::Pos().x-29, Gate::Pos().y+4, Gate::Pos().x-29, (*input2).Pos().y);//Draw input1 wire
+		fl_line(Gate::Pos().x-29, Gate::Pos().y+4, Gate::Pos().x-29, (*input1).Pos().y);//Draw input1 wire
+		
+		fl_color(fl_rgb_color(255,0,0));
+		fl_line_style(FL_SOLID, 2);
+		fl_line(Gate::Pos().x-22, Gate::Pos().y-3, Gate::Pos().x-23, (*input2).Pos().y);//Draw input1 wire
+
 		
 		AND->draw(Gate::Pos().x-(AND->w()/2),Gate::Pos().y-(AND->h()/2)); //Draw Gate
 		
@@ -129,13 +130,13 @@ public:
 		fl_line_style(FL_SOLID, 4);
 		fl_line(Gate::Pos().x, Gate::Pos().y, Fl::w()-1, Gate::Pos().y);//Draw wire
 		
-		fl_color(fl_rgb_color(255,0,0));
-		fl_line_style(FL_SOLID, 2);
-		fl_line(Gate::Pos().x-19, Gate::Pos().y-4, Gate::Pos().x-19, (*input1).Pos().y);//Draw input1 wire
-		
 		fl_color(fl_rgb_color(0,190,0));
 		fl_line_style(FL_SOLID, 2);
-		fl_line(Gate::Pos().x-29, Gate::Pos().y+5, Gate::Pos().x-29, (*input2).Pos().y);//Draw input1 wire
+		fl_line(Gate::Pos().x-29, Gate::Pos().y+5, Gate::Pos().x-29, (*input1).Pos().y);//Draw input1 wire
+		
+		fl_color(fl_rgb_color(255,0,0));
+		fl_line_style(FL_SOLID, 2);
+		fl_line(Gate::Pos().x-19, Gate::Pos().y-4, Gate::Pos().x-19, (*input2).Pos().y);//Draw input2 wire
 		
 		OR->draw(Gate::Pos().x-(OR->w()/2),Gate::Pos().y-(OR->h()/2)); //Draw Gate
 		
