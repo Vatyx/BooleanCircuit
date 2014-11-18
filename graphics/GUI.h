@@ -25,10 +25,13 @@ class GUI: public Fl_Widget {
 	Button* not_button;
 	Button* or_button;
 	Button* accept_button;
+	Button* check_button;
 	Fl_Input* input1;
 	Fl_Input* input2;
 	int gate_button;
 	Button* remove_button;
+	vector<Fl_Input*> inputs;
+	string message;
 
 	int height;
 	int width;
@@ -39,8 +42,10 @@ public:
 	void draw();
 	Fl_Input* Input1() {return input1;}
 	Fl_Input* Input2() {return input2;}
+	Fl_Input* get_input(int i) {return inputs[i];}
 	int get_gate_button() {return gate_button;};
 	void set_gate_button(int button) {gate_button = button;};
+	void set_message(string m) {message = m;}
 };
 
 //-----------------------------------------------------------------------
@@ -50,7 +55,6 @@ class Canvas : public Fl_Widget{
 	vector<Gate*> gates;
 	Fl_Scroll* parent;
 	Truth_Table* table;
-	
 public:
     Canvas(int X, int Y, int W, int H, Fl_Scroll* sc, const char*L=0);
 	void add_gate(int gate, Gate* input1, Gate* input2);

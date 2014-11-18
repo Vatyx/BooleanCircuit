@@ -9,8 +9,8 @@ int main() {
 			new Fl_Box(50,50,50,50,"Box");
 			Canvas* canvas = new Canvas(0, 0, scroll1.w(), scroll1.h(), &scroll1);
 		scroll1.end();
-		Fl_Scroll scroll2(0,scroll1.h(),win.w(),334);
-		scroll2.type(0);
+		Fl_Scroll scroll2(0,scroll1.h(),win.w()-192,334);
+		scroll2.type(Fl_Scroll::HORIZONTAL_ALWAYS);
 		scroll2.begin();
 			Truth_Table* table = new Truth_Table(0,scroll1.h(),win.w(),scroll2.h(), canvas);
 			canvas->set_table(table);

@@ -6,9 +6,19 @@ void resize(Canvas *ds, bool dir) {
 	if (ds->Gates()->size() > 9) {
 		if (dir) {
 			((Fl_Widget*)ds)->size(((Fl_Widget*)ds)->w()+64,((Fl_Widget*)ds)->h()+48);
+			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()+64,((Fl_Widget*)ds->get_table())->h());
 		}
 		else {
 			((Fl_Widget*)ds)->size(((Fl_Widget*)ds)->w()-64,((Fl_Widget*)ds)->h()-48);
+			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()-64,((Fl_Widget*)ds->get_table())->h());
+		}
+	}
+	if (ds->Gates()->size() > 11) {
+		if (dir) {
+			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()+64,((Fl_Widget*)ds->get_table())->h());
+		}
+		else {
+			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()-64,((Fl_Widget*)ds->get_table())->h());
 		}
 	}
 }
@@ -39,6 +49,35 @@ void not_callback(Fl_Widget* widget, void*) {
 	gui->redraw();
 }
 
+void check_callback(Fl_Widget* widget, void*) {
+	
+	Canvas* ds = ((Button*)widget)->Parent()->Parent();
+	GUI* gui = ((Button*)widget)->Parent();
+	Gate* last_gate = ds->Gates()->operator[](ds->Gates()->size()-1);
+	vector<bool> last_output = last_gate->get_output();
+	
+	for (int i=0;i<8;i++) {
+		string input = gui->get_input(i)->value();
+		bool in = false;
+		if (input == "0"){
+			in = false;}
+		else if (input == "1"){
+			in = true;}
+		else {
+			gui->set_message("Bad Input.");
+			gui->redraw();
+			return;
+		}
+		if (in != last_output[i]) {
+			gui->set_message("Incorrect.");
+			gui->redraw();
+			return;
+		}
+	}
+	gui->set_message("Correct!");
+	gui->redraw();
+}
+
 void remove_callback(Fl_Widget* widget, void*) {
 	Canvas* ds = ((Button*)widget)->Parent()->Parent();
 	if (ds->Gates()->size()>3)
@@ -47,6 +86,7 @@ void remove_callback(Fl_Widget* widget, void*) {
 	resize(ds,false);
 	ds->redraw();
 	ds->get_table()->redraw();
+	((Button*)widget)->Parent()->redraw();
 }
 
 void accept_callback(Fl_Widget* widget, void*) {
@@ -97,6 +137,7 @@ void accept_callback(Fl_Widget* widget, void*) {
 	resize(gui->Parent(),true);
 	gui->Parent()->redraw();
 	gui->Parent()->get_table()->redraw();
+	gui->redraw();
 }
 
 //-----------------------------------------------------------------------
@@ -122,15 +163,43 @@ GUI::GUI(int X, int Y, int W, int H, const char*L) : Fl_Widget(X,Y,W,H,L){
 	accept_button = new Button((H*9)-H/2,Y+H/4,H/2,H,"Accept");
 	accept_button->set_parent(this);
 	((Fl_Button*)accept_button)->callback((Fl_Callback*)accept_callback);
-	
+
+	check_button = new Button(W-192,Y+H/4,H/2,H,"Check");
+	check_button->set_parent(this);
+	((Fl_Button*)check_button)->callback((Fl_Callback*)check_callback);
+
 	remove_button = new Button((H*10),Y + H/4,H/2,H,"Remove");
 	remove_button->set_parent(this);
 	((Fl_Button*)remove_button)->callback((Fl_Callback*)remove_callback);
+	
+	int yy = 500;
+	int ww = 1600;
+	int hh = 300;
+	for (int i=0;i<8;++i) {
+		//string s = "Input " + to_string(i+1);
+		Fl_Input* input = new Fl_Input(ww-64,i*((int)(hh/8.0)) + yy,64,(int)(hh/8.0),"");
+		inputs.push_back(input);
+	}
 }
 
 void GUI::draw() {
 	fl_color(fl_rgb_color(128,128,128));
 	fl_rectf(x(), y(), w(), h());
+	((Fl_Widget*)and_button)->redraw();
+	((Fl_Widget*)not_button)->redraw();
+	((Fl_Widget*)or_button)->redraw();
+	input1->redraw();
+	input2->redraw();
+	((Fl_Widget*)accept_button)->redraw();
+	((Fl_Widget*)remove_button)->redraw();
+	((Fl_Widget*)check_button)->redraw();
+	//for (int i=0;i<inputs.size();++i) {
+		//inputs[i]->redraw();
+	//}
+	cout<<message<<"\n";
+	cout<<y()<<"\n";
+	fl_color(fl_rgb_color(255,255,255));
+	fl_draw(message.c_str(), w()-92, y()+32);
 }
 
 //-----------------------------------------------------------------------
@@ -190,6 +259,9 @@ void Canvas::draw() {
 	fl_rectf(x(), y(), w(), h());
 	
 	for (int i=0;i<gates.size();++i) {
+		fl_color(FL_BLACK);
+		string s = "Gate " + to_string(i+1);
+		fl_draw(s.c_str(), s.size(), (i+1)*64 + x()-32, ((i+1)*48)+y()+36);
 		gates[i]->draw();
 	}
 	if (gui!= NULL){
