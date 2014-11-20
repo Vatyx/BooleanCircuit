@@ -12,7 +12,7 @@ int main() {
 		Fl_Scroll scroll2(0,scroll1.h(),win.w()-192,334);
 		scroll2.type(Fl_Scroll::HORIZONTAL_ALWAYS);
 		scroll2.begin();
-			Truth_Table* table = new Truth_Table(0,scroll1.h(),win.w(),scroll2.h(), canvas);
+			Truth_Table* table = new Truth_Table(0,scroll2.y(),scroll2.w(),scroll2.h(), canvas);
 			canvas->set_table(table);
 			table->set_scroll(&scroll2);
 		scroll2.end();

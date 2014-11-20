@@ -4,15 +4,13 @@ using namespace std;
 
 Truth_Table::Truth_Table(int x, int y, int w, int h, Canvas* p, const char* L) : Fl_Widget(x,y,w,h,L) {
 	parent = p;
-	size(p->w()+1,this->h());
+	//size(p->w()+1,this->h());
 
 }
 void Truth_Table::draw() {
 
 	fl_color(fl_rgb_color(255,255,255));
-	fl_rectf(x(), y(), scroll->w(), scroll->h());
-	int x = Parent()->x();
-	cout<<x<<"\n";
+	fl_rectf(x(), y(), w(), h());
 
 	vector<Gate*>* gates = Parent()->Gates();
 	for (int i=0;i<gates->size();++i) {

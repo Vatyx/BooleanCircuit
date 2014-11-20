@@ -6,19 +6,27 @@ void resize(Canvas *ds, bool dir) {
 	if (ds->Gates()->size() > 9) {
 		if (dir) {
 			((Fl_Widget*)ds)->size(((Fl_Widget*)ds)->w()+64,((Fl_Widget*)ds)->h()+48);
-			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()+64,((Fl_Widget*)ds->get_table())->h());
 		}
 		else {
 			((Fl_Widget*)ds)->size(((Fl_Widget*)ds)->w()-64,((Fl_Widget*)ds)->h()-48);
-			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()-64,((Fl_Widget*)ds->get_table())->h());
+			if (ds->Parent()->xposition() > (ds->w() - ds->Parent()->w())) {
+				ds->Parent()->scroll_to(ds->w() - ds->Parent()->w(), ds->Parent()->yposition());
+			}
+			if (ds->Parent()->yposition() > (ds->h() - ds->Parent()->h())) {
+				ds->Parent()->scroll_to(ds->Parent()->xposition(), ds->h() - ds->Parent()->h());
+			}
 		}
 	}
-	if (ds->Gates()->size() > 11) {
+	if (ds->Gates()->size() > 21) {
+		Truth_Table* table = ds->get_table();
 		if (dir) {
-			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()+64,((Fl_Widget*)ds->get_table())->h());
+			((Fl_Widget*)table)->size(((Fl_Widget*)table)->w()+64,((Fl_Widget*)table)->h());
 		}
 		else {
-			((Fl_Widget*)ds->get_table())->size(((Fl_Widget*)ds->get_table())->w()-64,((Fl_Widget*)ds->get_table())->h());
+			((Fl_Widget*)table)->size(((Fl_Widget*)table)->w()-64,((Fl_Widget*)table)->h());
+			if (table->get_scroll()->xposition() > (table->w() - table->get_scroll()->w())) {
+				table->get_scroll()->scroll_to(table->w() - table->get_scroll()->w(), table->get_scroll()->yposition());
+			}
 		}
 	}
 }
@@ -80,13 +88,11 @@ void check_callback(Fl_Widget* widget, void*) {
 
 void remove_callback(Fl_Widget* widget, void*) {
 	Canvas* ds = ((Button*)widget)->Parent()->Parent();
+	resize(ds,false);
 	if (ds->Gates()->size()>3)
 		ds->Gates()->erase(ds->Gates()->end() - 1);
-	//delete g;
-	resize(ds,false);
-	ds->redraw();
-	ds->get_table()->redraw();
-	((Button*)widget)->Parent()->redraw();
+	ds->get_table()->get_scroll()->redraw();
+	ds->Parent()->redraw();
 }
 
 void accept_callback(Fl_Widget* widget, void*) {
@@ -135,9 +141,8 @@ void accept_callback(Fl_Widget* widget, void*) {
 		default: break;
 	}
 	resize(gui->Parent(),true);
-	gui->Parent()->redraw();
-	gui->Parent()->get_table()->redraw();
-	gui->redraw();
+	gui->Parent()->get_table()->get_scroll()->redraw();
+	gui->Parent()->Parent()->redraw();
 }
 
 //-----------------------------------------------------------------------
@@ -196,8 +201,6 @@ void GUI::draw() {
 	//for (int i=0;i<inputs.size();++i) {
 		//inputs[i]->redraw();
 	//}
-	cout<<message<<"\n";
-	cout<<y()<<"\n";
 	fl_color(fl_rgb_color(255,255,255));
 	fl_draw(message.c_str(), w()-92, y()+32);
 }
