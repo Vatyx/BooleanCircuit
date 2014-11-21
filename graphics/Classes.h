@@ -10,10 +10,12 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_File_Chooser.H>
 
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "stdio.h"
 
 class Canvas;

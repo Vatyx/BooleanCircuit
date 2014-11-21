@@ -1,5 +1,4 @@
 #include "Truth_Table.h"
-
 using namespace std;
 
 Gate::Gate(Point p, vector<bool>* out, Canvas* pa, const char* L){//Constructor
@@ -11,9 +10,10 @@ Gate::Gate(Point p, vector<bool>* out, Canvas* pa, const char* L){//Constructor
 }
 void Gate::draw() {
 	//cout<<"Drawing "<<pos.x<<"\n";
-	fl_color(fl_rgb_color(25,218,255));
+	fl_color(fl_rgb_color(0,79,255));
 	fl_line_style(FL_SOLID, 4);
 	fl_line(pos.x + Parent()->x(), pos.y + Parent()->y(), Fl::w()-1, pos.y + Parent()->y());
+	fl_rectf(pos.x+Parent()->x()-16,pos.y+Parent()->y()-16,32,32);
 	draw_output();
 }
 void Gate::draw_output() {
@@ -126,7 +126,7 @@ void Not_Gate::draw() {
 	
 	Fl_Widget* ds = ((Fl_Widget*)Gate::Parent());
 	
-	fl_color(fl_rgb_color(84,79,34));
+	fl_color(fl_rgb_color(125,118,50));
 	fl_line_style(FL_SOLID, 4);
 	fl_line(x, y, ds->w()-1, y);//Draw wire
 	

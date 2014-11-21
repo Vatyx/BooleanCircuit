@@ -1,7 +1,7 @@
 #ifndef TRUTH
 #define TRUTH
 
-#include "GUI.h"
+#include "Canvas.h"
 using namespace std;
 
 class Truth_Table : public Fl_Widget {

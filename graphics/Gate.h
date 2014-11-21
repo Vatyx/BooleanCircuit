@@ -1,8 +1,7 @@
 #ifndef GATE_H
 #define GATE_H
 
-#include "Classes.h"
-
+#include "Helper_Functions.h"
 using namespace std;
 
 struct Point {
@@ -53,6 +52,8 @@ public:
 	And_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa);
 	void draw();
 	void cal_output();
+	Gate* get_input1() {return input1;}
+	Gate* get_input2() {return input2;}
 };
 
 //-----------------------------------------------------------------------
@@ -66,6 +67,8 @@ public:
 	Or_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa);
 	void draw();
 	void cal_output();
+	Gate* get_input1() {return input1;}
+	Gate* get_input2() {return input2;}
 };
 
 //-----------------------------------------------------------------------
@@ -78,6 +81,7 @@ public:
 	Not_Gate(Point p, Gate* i1, Canvas* pa);
 	void draw();
 	void cal_output();
+	Gate* get_input1() {return input1;}
 };
 
 #endif
