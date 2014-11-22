@@ -16,7 +16,9 @@ void Truth_Table::draw() {
 	for (int i=0;i<gates->size();++i) {
 		vector<bool> output = (*gates)[i]->get_output();
 		
-		if (gates->size() > 3 && i == gates->size()-1)
+		if (gates->size() > 3 && i == gates->size()-1 && Parent()->Accepted() == false)
+			fl_color(fl_rgb_color(255,0,0));
+		else if (gates->size() > 3 && i == gates->size()-1)
 			fl_color(fl_rgb_color(255,255,0));
 		else if (i%2 == 1)
 			fl_color(fl_rgb_color(220,220,220));

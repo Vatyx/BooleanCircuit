@@ -21,8 +21,9 @@ public:
 	void set_gui(GUI* g) {gui = g;}
 	void set_parent(Fl_Scroll* p) {parent = p;}
     void draw();
-	int num_gates () {return gates.size();}
+	int num_gates() {return gates.size();}
 	vector<Gate*> *Gates () {return &gates;}
+	Gate* get_gate (int i) {return gates[i];}
 	Truth_Table* get_table() {return table;}
 	void set_table(Truth_Table* t) {table = t;}
 	void generate_circuit();

@@ -6,6 +6,7 @@ Canvas::Canvas(int X, int Y, int W, int H, Fl_Scroll* sc, const char*L): Fl_Widg
 	parent = sc;
 	table = NULL;
 	gui = NULL;
+	accepted = true;
 	
 	bool out1[8] = {false,false,false,false,true,true,true,true };
 	out.assign(&out1[0], &out1[0]+8);

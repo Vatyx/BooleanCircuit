@@ -6,10 +6,10 @@ Gate::Gate(Point p, vector<bool>* out, Canvas* pa, const char* L){//Constructor
 	for (int i=0;i< (*out).size();++i) {
 		output.push_back((*out)[i]);
 	}
+	accepted = true;
 	parent = pa;
 }
 void Gate::draw() {
-	//cout<<"Drawing "<<pos.x<<"\n";
 	fl_color(fl_rgb_color(0,79,255));
 	fl_line_style(FL_SOLID, 4);
 	fl_line(pos.x + Parent()->x(), pos.y + Parent()->y(), Fl::w()-1, pos.y + Parent()->y());
@@ -41,7 +41,9 @@ void Gate::set_output(vector<bool>* out) {
 And_Gate::And_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa): Gate(p, pa) {
 	input1 = i1;
 	input2 = i2;
-	AND  = new Fl_PNG_Image("./Gate_icons/And_Gate.png");
+	AND = new Fl_PNG_Image("./Gate_icons/And_Gate.png");
+	AND_gray = new Fl_PNG_Image("./Gate_icons/And_Gate.png");
+	AND_gray->desaturate();
 }
 void And_Gate::draw() {
 	cal_output();
@@ -63,7 +65,12 @@ void And_Gate::draw() {
 	fl_line_style(FL_SOLID, 2);
 	fl_line(x-22, y-3, x-23, (*input2).Pos().y + Parent()->y());//Draw input1 wire
 
-	AND->draw(x-(AND->w()/2),y-(AND->h()/2)); //Draw Gate
+	if (Accepted())
+		AND->draw(x-(AND->w()/2),y-(AND->h()/2)); //Draw Gate
+	else {
+		AND_gray->draw(x-(AND->w()/2),y-(AND->h()/2));
+	}
+		
 	
 }
 void And_Gate::cal_output() {
@@ -80,6 +87,8 @@ Or_Gate::Or_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa): Gate(p, pa) {
 	input1 = i1;
 	input2 = i2;
 	OR  = new Fl_PNG_Image("./Gate_icons/Or_Gate.png");
+	OR_gray  = new Fl_PNG_Image("./Gate_icons/Or_Gate.png");
+	OR_gray->desaturate();
 }
 void Or_Gate::draw() {
 	cal_output();
@@ -101,7 +110,11 @@ void Or_Gate::draw() {
 	fl_line_style(FL_SOLID, 2);
 	fl_line(x-19, y-4, x-19, (*input2).Pos().y + Parent()->y());//Draw input2 wire
 	
-	OR->draw(x-(OR->w()/2),y-(OR->h()/2)); //Draw Gate
+	if (Accepted())
+		OR->draw(x-(OR->w()/2),y-(OR->h()/2)); //Draw Gate
+	else {
+		OR_gray->draw(x-(OR->w()/2),y-(OR->h()/2));
+	}
 	
 }
 void Or_Gate::cal_output() {
@@ -117,6 +130,8 @@ void Or_Gate::cal_output() {
 Not_Gate::Not_Gate(Point p, Gate* i1, Canvas* pa): Gate(p, pa) {
 	input1 = i1;
 	NOT = new Fl_PNG_Image("./Gate_icons/Not_Gate.png");
+	NOT_gray  = new Fl_PNG_Image("./Gate_icons/Not_Gate.png");
+	NOT_gray->desaturate();
 }
 void Not_Gate::draw() {
 	cal_output();
@@ -134,7 +149,11 @@ void Not_Gate::draw() {
 	fl_line_style(FL_SOLID, 2);
 	fl_line(x-29, y, x-29, (*input1).Pos().y + Parent()->y());//Draw input1 wire
 	
-	NOT->draw(x-(NOT->w()/2),y-(NOT->h()/2)); //Draw Gate
+	if (Accepted())
+		NOT->draw(x-(NOT->w()/2),y-(NOT->h()/2)); //Draw Gate
+	else {
+		NOT_gray->draw(x-(NOT->w()/2),y-(NOT->h()/2));
+	}
 	
 }
 void Not_Gate::cal_output() {

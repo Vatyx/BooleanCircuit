@@ -2,23 +2,23 @@
 
 using namespace std;
 
-void resize(Canvas *ds, bool dir) {
-	if (ds->Gates()->size() > 9) {
+void resize(Canvas *canvas, bool dir) {
+	if (canvas->Gates()->size() > 9) {
 		if (dir) {
-			((Fl_Widget*)ds)->size(((Fl_Widget*)ds)->w()+64,((Fl_Widget*)ds)->h()+48);
+			((Fl_Widget*)canvas)->size(((Fl_Widget*)canvas)->w()+64,((Fl_Widget*)canvas)->h()+48);
 		}
 		else {
-			((Fl_Widget*)ds)->size(((Fl_Widget*)ds)->w()-64,((Fl_Widget*)ds)->h()-48);
-			if (ds->Parent()->xposition() > (ds->w() - ds->Parent()->w())) {
-				ds->Parent()->scroll_to(ds->w() - ds->Parent()->w(), ds->Parent()->yposition());
+			((Fl_Widget*)canvas)->size(((Fl_Widget*)canvas)->w()-64,((Fl_Widget*)canvas)->h()-48);
+			if (canvas->Parent()->xposition() > (canvas->w() - canvas->Parent()->w())) {
+				canvas->Parent()->scroll_to(canvas->w() - canvas->Parent()->w(), canvas->Parent()->yposition());
 			}
-			if (ds->Parent()->yposition() > (ds->h() - ds->Parent()->h())) {
-				ds->Parent()->scroll_to(ds->Parent()->xposition(), ds->h() - ds->Parent()->h());
+			if (canvas->Parent()->yposition() > (canvas->h() - canvas->Parent()->h())) {
+				canvas->Parent()->scroll_to(canvas->Parent()->xposition(), canvas->h() - canvas->Parent()->h());
 			}
 		}
 	}
-	if (ds->Gates()->size() > 21) {
-		Truth_Table* table = ds->get_table();
+	if (canvas->Gates()->size() > 21) {
+		Truth_Table* table = canvas->get_table();
 		if (dir) {
 			((Fl_Widget*)table)->size(((Fl_Widget*)table)->w()+64,((Fl_Widget*)table)->h());
 		}
@@ -31,37 +31,105 @@ void resize(Canvas *ds, bool dir) {
 	}
 }
 
+bool check_Gate_Inputs(int i1,int i2, Canvas* canvas) {
+	
+	if (i1<0 || canvas->num_gates() < i1 || i2<0 || canvas->num_gates() < i2) {
+		canvas->get_gui()->set_message("Bad Gate Input.");
+		canvas->get_gui()->redraw();
+		return false;
+	}
+	return true;
+}
+
+bool check_Gate_Input(int i, Canvas* canvas) {
+	
+	if (i==0 || canvas->num_gates() < i) {
+		canvas->get_gui()->set_message("Bad Gate Input.");
+		canvas->get_gui()->redraw();
+		return false;
+	}
+	return true;
+}
+
 void and_callback(Fl_Widget* widget, void*) {
 	GUI* gui = ((Button*)widget)->Parent();
-	gui->set_gate_button(1);
-	gui->Input2()->show();
-	gui->Input1()->label("AND In1");
-	gui->Input2()->label("AND In2");
+	Canvas* canvas = gui->Parent();
+	
+	int i1;
+	sscanf(gui->Input1()->value(), "%d", &i1);
+	int i2;
+	sscanf(gui->Input2()->value(), "%d", &i2);
+	if (!check_Gate_Inputs(i1,i2,canvas))
+		return;
+	
+	cout<<"Checking if accepted\n";
+	if (!canvas->Accepted()&&canvas->num_gates()>3) {
+		cout<<"Deleting!\n";
+		canvas->Gates()->erase(canvas->Gates()->end()-1);
+	}
+	canvas->set_accepted(false);
+	canvas->add_gate(0,canvas->Gates()->operator[](i1-1),canvas->Gates()->operator[](i2-1));
+	canvas->get_gate(canvas->num_gates()-1)->set_accepted(false);
+	
+	canvas->Parent()->redraw();
+	canvas->get_table()->get_scroll()->redraw();
 	gui->redraw();
+	
 }
 
 void or_callback(Fl_Widget* widget, void*) {
 	GUI* gui = ((Button*)widget)->Parent();
-	gui->set_gate_button(2);
-	gui->Input2()->show();
-	gui->Input1()->label("OR In1");
-	gui->Input2()->label("OR In2");
+	Canvas* canvas = gui->Parent();
+	
+	int i1;
+	sscanf(gui->Input1()->value(), "%d", &i1);
+	int i2;
+	sscanf(gui->Input2()->value(), "%d", &i2);
+	if (!check_Gate_Inputs(i1,i2,canvas))
+		return;
+	
+	cout<<"Checking if accepted\n";
+	if (!canvas->Accepted()&&canvas->num_gates()>3) {
+		cout<<"Deleting!\n";
+		canvas->Gates()->erase(canvas->Gates()->end()-1);
+	}
+	canvas->set_accepted(false);
+	canvas->add_gate(1,canvas->Gates()->operator[](i1-1),canvas->Gates()->operator[](i2-1));
+	canvas->get_gate(canvas->num_gates()-1)->set_accepted(false);
+	
+	canvas->Parent()->redraw();
+	canvas->get_table()->get_scroll()->redraw();
 	gui->redraw();
 }
 
 void not_callback(Fl_Widget* widget, void*) {
 	GUI* gui = ((Button*)widget)->Parent();
-	gui->set_gate_button(3);
-	gui->Input2()->hide();
-	gui->Input1()->label("NOT In");
+	Canvas* canvas = gui->Parent();
+	
+	int i1;
+	sscanf(gui->Input1()->value(), "%d", &i1);
+	if (!check_Gate_Input(i1,canvas))
+		return;
+	
+	cout<<"Checking if accepted\n";
+	if (!canvas->Accepted()&&canvas->num_gates()>3) {
+		cout<<"Deleting!\n";
+		canvas->Gates()->erase(canvas->Gates()->end()-1);
+	}
+	canvas->set_accepted(false);
+	canvas->add_gate(0,canvas->Gates()->operator[](i1-1));
+	canvas->get_gate(canvas->num_gates()-1)->set_accepted(false);
+	
+	canvas->Parent()->redraw();
+	canvas->get_table()->get_scroll()->redraw();
 	gui->redraw();
 }
 
 void check_callback(Fl_Widget* widget, void*) {
 	
-	Canvas* ds = ((Button*)widget)->Parent()->Parent();
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
 	GUI* gui = ((Button*)widget)->Parent();
-	Gate* last_gate = ds->Gates()->operator[](ds->Gates()->size()-1);
+	Gate* last_gate = canvas->Gates()->operator[](canvas->Gates()->size()-1);
 	vector<bool> last_output = last_gate->get_output();
 	
 	for (int i=0;i<8;i++) {
@@ -87,17 +155,24 @@ void check_callback(Fl_Widget* widget, void*) {
 }
 
 void remove_callback(Fl_Widget* widget, void*) {
-	Canvas* ds = ((Button*)widget)->Parent()->Parent();
-	resize(ds,false);
-	if (ds->Gates()->size()>3)
-		ds->Gates()->erase(ds->Gates()->end() - 1);
-	ds->get_table()->get_scroll()->redraw();
-	ds->Parent()->redraw();
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
+	resize(canvas,false);
+	if (canvas->Gates()->size()>3)
+		canvas->Gates()->erase(canvas->Gates()->end() - 1);
+	canvas->get_table()->get_scroll()->redraw();
+	canvas->set_accepted(true);
+	canvas->Parent()->redraw();
 }
 
 void accept_callback(Fl_Widget* widget, void*) {
 	GUI* gui = ((Button*)widget)->Parent();
-	//Canvas* ds = gui->Parent();
+	if (gui->Parent()->Accepted())
+		return;
+	gui->Parent()->Gates()->operator[](gui->Parent()->Gates()->size()-1)->set_accepted(true);
+	cout<<"Accepted.\n";
+	gui->Parent()->set_accepted(true);
+	
+	/*
 	int button = gui->get_gate_button();
 	int i1;
 	sscanf(gui->Input1()->value(), "%d", &i1);
@@ -110,14 +185,7 @@ void accept_callback(Fl_Widget* widget, void*) {
 	}
 	switch(button) {
 		case 1:
-			if (i1==0 || gui->Parent()->num_gates() < i1) {
-				cout<<"Bad Input1\n";
-				return;
-			}
-			if (i2==0 || gui->Parent()->num_gates() < i2) {
-				cout<<"Bad Input2\n";
-				return;
-			}
+
 			gui->Parent()->add_gate(0,gui->Parent()->Gates()->operator[](i1-1),gui->Parent()->Gates()->operator[](i2-1));
 			break;
 		case 2:
@@ -141,6 +209,7 @@ void accept_callback(Fl_Widget* widget, void*) {
 		default: break;
 	}
 	resize(gui->Parent(),true);
+	*/
 	gui->Parent()->get_table()->get_scroll()->redraw();
 	gui->Parent()->Parent()->redraw();
 }
@@ -207,7 +276,7 @@ void createGates(const char* filepath, Canvas* canvas) {
 }
 
 void load_callback(Fl_Widget* widget, void*) {
-	Canvas* ds = ((Button*)widget)->Parent()->Parent();
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
 	Fl_File_Chooser chooser(".", "*.txt", Fl_File_Chooser::SINGLE, "Title Of Chooser");
 	chooser.show();
 	while(chooser.shown())
@@ -216,13 +285,13 @@ void load_callback(Fl_Widget* widget, void*) {
     if ( chooser.value() == NULL )
 		{ cout<<"User hit Cancel\n"; return; }
 	const char* s = chooser.value(0);
-	while (ds->Gates()->size()>3){
-		resize(ds,false);
-		ds->Gates()->erase(ds->Gates()->end() - 1);
+	while (canvas->Gates()->size()>3){
+		resize(canvas,false);
+		canvas->Gates()->erase(canvas->Gates()->end() - 1);
 	}
-	createGates(s,ds);
-	ds->get_gui()->set_message("Loading Complete");
-	ds->get_gui()->redraw();
+	createGates(s,canvas);
+	canvas->get_gui()->set_message("Loading Complete");
+	canvas->get_gui()->redraw();
 }
 
 int find_gate_id(Canvas* canvas, Gate* gate) {
@@ -235,32 +304,32 @@ int find_gate_id(Canvas* canvas, Gate* gate) {
 }
 
 void save_callback(Fl_Widget* widget, void*) {
-	Canvas* ds = ((Button*)widget)->Parent()->Parent();
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
 	
 	const char* path = fl_file_chooser("Enter name and directory", "*.txt","Goober.txt",0);
 	cout << path<<"\n";
 	
 	ofstream file;
 	file.open (path, std::fstream::trunc);
-	for (int i=3;i<ds->Gates()->size();++i) {
-		if (dynamic_cast<And_Gate*>(ds->Gates()->operator[](i))) {
-			int in1 = find_gate_id(ds,(((And_Gate*)(ds->Gates()->operator[](i)))->get_input1()));
-			int in2 = find_gate_id(ds,(((And_Gate*)(ds->Gates()->operator[](i)))->get_input2()));
+	for (int i=3;i<canvas->Gates()->size();++i) {
+		if (dynamic_cast<And_Gate*>(canvas->Gates()->operator[](i))) {
+			int in1 = find_gate_id(canvas,(((And_Gate*)(canvas->Gates()->operator[](i)))->get_input1()));
+			int in2 = find_gate_id(canvas,(((And_Gate*)(canvas->Gates()->operator[](i)))->get_input2()));
 			file<<"AND(" << in1 << "," << in2 << ")\r\n";
 		}
-		else if (dynamic_cast<Or_Gate*>(ds->Gates()->operator[](i))) {
-			int in1 = find_gate_id(ds,(((Or_Gate*)(ds->Gates()->operator[](i)))->get_input1()));
-			int in2 = find_gate_id(ds,(((Or_Gate*)(ds->Gates()->operator[](i)))->get_input2()));
+		else if (dynamic_cast<Or_Gate*>(canvas->Gates()->operator[](i))) {
+			int in1 = find_gate_id(canvas,(((Or_Gate*)(canvas->Gates()->operator[](i)))->get_input1()));
+			int in2 = find_gate_id(canvas,(((Or_Gate*)(canvas->Gates()->operator[](i)))->get_input2()));
 			file<<"OR(" << in1 << "," << in2 << ")\r\n";
 		}
-		else if (dynamic_cast<Not_Gate*>(ds->Gates()->operator[](i))) {
-			int in1 = find_gate_id(ds,(((Not_Gate*)(ds->Gates()->operator[](i)))->get_input1()));
+		else if (dynamic_cast<Not_Gate*>(canvas->Gates()->operator[](i))) {
+			int in1 = find_gate_id(canvas,(((Not_Gate*)(canvas->Gates()->operator[](i)))->get_input1()));
 			file<<"NOT(" << in1 << ")\r\n";
 		}
 	}
 	//fl_message("Saving Complete.");
-	ds->get_gui()->set_message("Saving Complete");
-	ds->get_gui()->redraw();
+	canvas->get_gui()->set_message("Saving Complete");
+	canvas->get_gui()->redraw();
 	file.close();
 }
 
