@@ -70,5 +70,8 @@ void GUI::draw() {
 		//inputs[i]->redraw();
 	//}
 	fl_color(fl_rgb_color(255,255,255));
-	fl_draw(message.c_str(), (w()-64) - message.size()*12, y()+36);
+	if (message.size()>0) {
+		fl_draw(message.c_str(), (w()-64) - message.size()*12, y()+36);
+		message = "";
+	}
 }

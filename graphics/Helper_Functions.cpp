@@ -61,10 +61,11 @@ void and_callback(Fl_Widget* widget, void*) {
 	sscanf(gui->Input2()->value(), "%d", &i2);
 	if (!check_Gate_Inputs(i1,i2,canvas))
 		return;
+		
+	gui->Input1()->deactivate();
+	gui->Input2()->deactivate();
 	
-	cout<<"Checking if accepted\n";
 	if (!canvas->Accepted()&&canvas->num_gates()>3) {
-		cout<<"Deleting!\n";
 		canvas->Gates()->erase(canvas->Gates()->end()-1);
 	}
 	canvas->set_accepted(false);
@@ -87,10 +88,11 @@ void or_callback(Fl_Widget* widget, void*) {
 	sscanf(gui->Input2()->value(), "%d", &i2);
 	if (!check_Gate_Inputs(i1,i2,canvas))
 		return;
+		
+	gui->Input1()->deactivate();
+	gui->Input2()->deactivate();
 	
-	cout<<"Checking if accepted\n";
 	if (!canvas->Accepted()&&canvas->num_gates()>3) {
-		cout<<"Deleting!\n";
 		canvas->Gates()->erase(canvas->Gates()->end()-1);
 	}
 	canvas->set_accepted(false);
@@ -111,9 +113,10 @@ void not_callback(Fl_Widget* widget, void*) {
 	if (!check_Gate_Input(i1,canvas))
 		return;
 	
-	cout<<"Checking if accepted\n";
+	gui->Input1()->deactivate();
+	gui->Input2()->deactivate();
+	
 	if (!canvas->Accepted()&&canvas->num_gates()>3) {
-		cout<<"Deleting!\n";
 		canvas->Gates()->erase(canvas->Gates()->end()-1);
 	}
 	canvas->set_accepted(false);
@@ -156,6 +159,8 @@ void check_callback(Fl_Widget* widget, void*) {
 
 void remove_callback(Fl_Widget* widget, void*) {
 	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
+	canvas->get_gui()->Input1()->activate();
+	canvas->get_gui()->Input2()->activate();
 	resize(canvas,false);
 	if (canvas->Gates()->size()>3)
 		canvas->Gates()->erase(canvas->Gates()->end() - 1);
@@ -166,10 +171,11 @@ void remove_callback(Fl_Widget* widget, void*) {
 
 void accept_callback(Fl_Widget* widget, void*) {
 	GUI* gui = ((Button*)widget)->Parent();
+	gui->Input1()->activate();
+	gui->Input2()->activate();
 	if (gui->Parent()->Accepted())
 		return;
 	gui->Parent()->Gates()->operator[](gui->Parent()->Gates()->size()-1)->set_accepted(true);
-	cout<<"Accepted.\n";
 	gui->Parent()->set_accepted(true);
 	
 	/*
