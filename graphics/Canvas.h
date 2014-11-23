@@ -29,6 +29,7 @@ public:
 	void generate_circuit();
 	bool Accepted() {return accepted;}
 	void set_accepted(bool a) {accepted = a;}
+	void Resize();
 };
 
 #endif

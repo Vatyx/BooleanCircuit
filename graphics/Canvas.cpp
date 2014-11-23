@@ -28,6 +28,7 @@ void Canvas::add_gate(int gate, Gate* input1, Gate* input2) {
 		case 1 : gates.push_back(new Or_Gate(Point(last_gate->Pos().x+64,last_gate->Pos().y+48),input1,input2,this)); break;
 		default : break;
 	}
+	Resize();
 }
 void Canvas::add_gate(int gate, Gate* input) {
 	Gate* last_gate = gates[gates.size()-1];
@@ -35,9 +36,9 @@ void Canvas::add_gate(int gate, Gate* input) {
 		case 0 : gates.push_back(new Not_Gate(Point(last_gate->Pos().x+64,last_gate->Pos().y+48),input,this)); break;
 		default : break;
 	}
+	Resize();
 }
 void Canvas::add_gate(int gate) {
-	parent->begin();
 	Gate* last_gate = gates[gates.size()-1];
 	switch (gate) {
 		case 0 : 
@@ -47,7 +48,7 @@ void Canvas::add_gate(int gate) {
 			break;
 		default : break;
 	}
-	parent->end();
+	Resize();
 }
 void Canvas::draw() {
 	if (table!= NULL){
@@ -68,11 +69,108 @@ void Canvas::draw() {
 	//cout<<"Drawing Canvas"<< Fl_Widget::y()<< "\n";
 }
 
+void Canvas::Resize() {
+	if (num_gates()>=9)
+		Fl_Widget::size(parent->w() + 64*(num_gates()-9),parent->h() + 48*(num_gates()-9));
+	if (parent->xposition() > (w() - parent->w())) {
+		parent->scroll_to(w() - parent->w(), parent->yposition());
+	}
+	if (parent->yposition() > (h() - parent->h())) {
+		parent->scroll_to(parent->xposition(), h() - parent->h());
+	}
+	
+	if (num_gates()>=21)
+	((Fl_Widget*)get_table())->size(get_table()->get_scroll()->w() + 64*(num_gates()-21),((Fl_Widget*)get_table())->h());
+
+	if (get_table()->get_scroll()->xposition() > (get_table()->w() - get_table()->get_scroll()->w())) {
+		get_table()->get_scroll()->scroll_to(get_table()->w() - get_table()->get_scroll()->w(), get_table()->get_scroll()->yposition());
+	}
+
+}
+
 void Canvas::generate_circuit() {
 	//Create tertiary AND Gates for every (1) in the truth table.
 	vector<bool> a = Gates()->operator[](0)->get_output();
+	vector<bool> b = Gates()->operator[](1)->get_output();
+	vector<bool> c = Gates()->operator[](2)->get_output();
+	
 	vector<bool> output;
 	for (int i=0;i<8;++i) {
-		output.push_back(get_gui()->get_input(i)->value());
+		int input;
+		sscanf(get_gui()->get_input(i)->value(), "%d", &input);
+		if (input<0 || input>1) {
+			get_gui()->set_message("Bad Gate Input.");
+			get_gui()->redraw();
+			return;
+		}
+		output.push_back(input != 0);
 	}
+	
+	while (Gates()->size()>3){
+		Gates()->erase(Gates()->end() - 1);
+	}
+	
+	vector<bool> nots {false,false,false};
+	vector<vector<int>> ands;
+	
+	for (int i=0; i<8;++i) {
+		if (output[i]) {
+			vector<int> g_positions = {0,0,0};
+			if (!a[i]) {
+				nots[0] = true;
+				g_positions[0] = 3;
+			}
+			else {
+				g_positions[0] = 0;
+			}
+			if (!b[i]) {
+				nots[1] = true;
+				g_positions[1] = 4;
+			}
+			else {
+				g_positions[1] = 1;
+			}
+			if (!c[i]) {
+				nots[2] = true;
+				g_positions[2] = 5;
+			}
+			else {
+				g_positions[2] = 2;
+			}	
+			ands.push_back(g_positions);
+		}
+	}
+
+	int num_nots = 0;
+	for (int i=0;i<3; ++i) {
+		if (nots[i] == true) {
+			add_gate(0,get_gate(i));
+			++num_nots;
+		}
+	}
+	
+	for (int i=0;i<ands.size();++i) {
+		if (ands[i][1] == 4 && nots[0] == false)
+			add_gate(0,get_gate(ands[i][0]),get_gate(3));
+		else if (ands[i][1] == 4 && nots[0] == true)
+			add_gate(0,get_gate(ands[i][0]),get_gate(4));
+		else 
+			add_gate(0,get_gate(ands[i][0]),get_gate(1));
+		
+		if (ands[i][2] == 2)
+			add_gate(0,get_gate(3+num_nots+(i*2)),get_gate(2));
+		else
+			add_gate(0,get_gate(3+num_nots+(i*2)),get_gate(ands[i][2] - (3-num_nots)));
+	}
+	if (ands.size()>1) {
+		add_gate(1,get_gate(4+num_nots),get_gate(6+num_nots));
+	}
+	for (int i=2;i<ands.size();++i) {
+		add_gate(1,get_gate(2+num_nots+((i+1)*2)),get_gate(num_gates()-1));
+	}
+	parent->redraw();
+	get_table()->get_scroll()->redraw();
 }
+
+
+

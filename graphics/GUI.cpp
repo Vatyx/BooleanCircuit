@@ -66,6 +66,7 @@ void GUI::draw() {
 	((Fl_Widget*)check_button)->redraw();
 	((Fl_Widget*)load_button)->redraw();
 	((Fl_Widget*)save_button)->redraw();
+	((Fl_Widget*)gen_button)->redraw();
 	//for (int i=0;i<inputs.size();++i) {
 		//inputs[i]->redraw();
 	//}

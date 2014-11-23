@@ -1,35 +1,5 @@
 #include "Truth_Table.h"
-
 using namespace std;
-
-void resize(Canvas *canvas, bool dir) {
-	if (canvas->Gates()->size() > 9) {
-		if (dir) {
-			((Fl_Widget*)canvas)->size(((Fl_Widget*)canvas)->w()+64,((Fl_Widget*)canvas)->h()+48);
-		}
-		else {
-			((Fl_Widget*)canvas)->size(((Fl_Widget*)canvas)->w()-64,((Fl_Widget*)canvas)->h()-48);
-			if (canvas->Parent()->xposition() > (canvas->w() - canvas->Parent()->w())) {
-				canvas->Parent()->scroll_to(canvas->w() - canvas->Parent()->w(), canvas->Parent()->yposition());
-			}
-			if (canvas->Parent()->yposition() > (canvas->h() - canvas->Parent()->h())) {
-				canvas->Parent()->scroll_to(canvas->Parent()->xposition(), canvas->h() - canvas->Parent()->h());
-			}
-		}
-	}
-	if (canvas->Gates()->size() > 21) {
-		Truth_Table* table = canvas->get_table();
-		if (dir) {
-			((Fl_Widget*)table)->size(((Fl_Widget*)table)->w()+64,((Fl_Widget*)table)->h());
-		}
-		else {
-			((Fl_Widget*)table)->size(((Fl_Widget*)table)->w()-64,((Fl_Widget*)table)->h());
-			if (table->get_scroll()->xposition() > (table->w() - table->get_scroll()->w())) {
-				table->get_scroll()->scroll_to(table->w() - table->get_scroll()->w(), table->get_scroll()->yposition());
-			}
-		}
-	}
-}
 
 bool check_Gate_Inputs(int i1,int i2, Canvas* canvas) {
 	
@@ -161,7 +131,7 @@ void remove_callback(Fl_Widget* widget, void*) {
 	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
 	canvas->get_gui()->Input1()->activate();
 	canvas->get_gui()->Input2()->activate();
-	resize(canvas,false);
+	canvas->Resize();
 	if (canvas->Gates()->size()>3)
 		canvas->Gates()->erase(canvas->Gates()->end() - 1);
 	canvas->get_table()->get_scroll()->redraw();
@@ -177,45 +147,6 @@ void accept_callback(Fl_Widget* widget, void*) {
 		return;
 	gui->Parent()->Gates()->operator[](gui->Parent()->Gates()->size()-1)->set_accepted(true);
 	gui->Parent()->set_accepted(true);
-	
-	/*
-	int button = gui->get_gate_button();
-	int i1;
-	sscanf(gui->Input1()->value(), "%d", &i1);
-	int i2;
-	sscanf(gui->Input2()->value(), "%d", &i2);
-
-	if (button<1 || button>3) {
-		cout<<"Need to select Gate-Button\n";
-		return;
-	}
-	switch(button) {
-		case 1:
-
-			gui->Parent()->add_gate(0,gui->Parent()->Gates()->operator[](i1-1),gui->Parent()->Gates()->operator[](i2-1));
-			break;
-		case 2:
-			if (i1==0 || gui->Parent()->num_gates() < i1) {
-				cout<<"Bad Input1\n";
-				return;
-			}
-			if (i2==0 || gui->Parent()->num_gates() < i2) {
-				cout<<"Bad Input2\n";
-				return;
-			}
-			gui->Parent()->add_gate(1,gui->Parent()->Gates()->operator[](i1-1),gui->Parent()->Gates()->operator[](i2-1));
-			break;
-		case 3:
-			if (i1==0 || gui->Parent()->num_gates() < i1) {
-				cout<<"Bad Input\n";
-				return;
-			}
-			gui->Parent()->add_gate(0,gui->Parent()->Gates()->operator[](i1-1));
-			break;
-		default: break;
-	}
-	resize(gui->Parent(),true);
-	*/
 	gui->Parent()->get_table()->get_scroll()->redraw();
 	gui->Parent()->Parent()->redraw();
 }
@@ -275,7 +206,7 @@ void createGates(const char* filepath, Canvas* canvas) {
 				canvas->add_gate(0, canvas->Gates()->operator[](a));
 				break;
 		}
-		resize(canvas,true);
+		canvas->Resize();
     }
 	canvas->Parent()->redraw();
 	canvas->get_table()->get_scroll()->redraw();
@@ -292,7 +223,7 @@ void load_callback(Fl_Widget* widget, void*) {
 		{ cout<<"User hit Cancel\n"; return; }
 	const char* s = chooser.value(0);
 	while (canvas->Gates()->size()>3){
-		resize(canvas,false);
+		canvas->Resize();
 		canvas->Gates()->erase(canvas->Gates()->end() - 1);
 	}
 	createGates(s,canvas);
@@ -333,7 +264,6 @@ void save_callback(Fl_Widget* widget, void*) {
 			file<<"NOT(" << in1 << ")\r\n";
 		}
 	}
-	//fl_message("Saving Complete.");
 	canvas->get_gui()->set_message("Saving Complete");
 	canvas->get_gui()->redraw();
 	file.close();

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void resize(Canvas *ds, bool dir);
+void resize(Canvas *ds);
 void and_callback(Fl_Widget* widget, void*);
 void or_callback(Fl_Widget* widget, void*);
 void not_callback(Fl_Widget* widget, void*);
