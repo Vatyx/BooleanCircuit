@@ -195,7 +195,7 @@ void createGates(const char* filepath, Canvas* canvas) {
 	while (getline(data_in,line)) {
 		a = int_from_string(line, 0);
 		b = int_from_string(line, 1);
-		switch(line[0]) {
+		switch(line[1]) {
 			case 'A':
 				canvas->add_gate(0, canvas->Gates()->operator[](a), canvas->Gates()->operator[](b));
 				break;
@@ -252,16 +252,16 @@ void save_callback(Fl_Widget* widget, void*) {
 		if (dynamic_cast<And_Gate*>(canvas->Gates()->operator[](i))) {
 			int in1 = find_gate_id(canvas,(((And_Gate*)(canvas->Gates()->operator[](i)))->get_input1()));
 			int in2 = find_gate_id(canvas,(((And_Gate*)(canvas->Gates()->operator[](i)))->get_input2()));
-			file<<"AND(" << in1 << "," << in2 << ")\r\n";
+			file<<"(AND," << in1 << "," << in2 << ")\r\n";
 		}
 		else if (dynamic_cast<Or_Gate*>(canvas->Gates()->operator[](i))) {
 			int in1 = find_gate_id(canvas,(((Or_Gate*)(canvas->Gates()->operator[](i)))->get_input1()));
 			int in2 = find_gate_id(canvas,(((Or_Gate*)(canvas->Gates()->operator[](i)))->get_input2()));
-			file<<"OR(" << in1 << "," << in2 << ")\r\n";
+			file<<"(OR," << in1 << "," << in2 << ")\r\n";
 		}
 		else if (dynamic_cast<Not_Gate*>(canvas->Gates()->operator[](i))) {
 			int in1 = find_gate_id(canvas,(((Not_Gate*)(canvas->Gates()->operator[](i)))->get_input1()));
-			file<<"NOT(" << in1 << ")\r\n";
+			file<<"(NOT," << in1 << ")\r\n";
 		}
 	}
 	canvas->get_gui()->set_message("Saving Complete");
