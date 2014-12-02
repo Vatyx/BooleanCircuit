@@ -1,3 +1,14 @@
+/*
+   Classes.h
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Forward declarations for parenting purposes.
+//
+
 #ifndef CLASSES_H
 #define CLASSES_H
 

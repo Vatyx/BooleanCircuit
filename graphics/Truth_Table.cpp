@@ -1,13 +1,22 @@
+/*
+   Truth_Table.cpp
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Draws the truth table window and updates the values as gates are entered.
+//
+
 #include "Truth_Table.h"
 
 using namespace std;
 
 Truth_Table::Truth_Table(int x, int y, int w, int h, Canvas* p, const char* L) : Fl_Widget(x,y,w,h,L) {
 	parent = p;
-	//size(p->w()+1,this->h());
-
 }
-void Truth_Table::draw() {
+void Truth_Table::draw() { // Draws the Truth Table
 
 	fl_color(fl_rgb_color(255,255,255));
 	fl_rectf(x(), y(), w(), h());
@@ -33,7 +42,7 @@ void Truth_Table::draw() {
 		fl_draw(s.c_str(), s.size(), (i+1)*64 + x() - 4, y()+24);
 		
 		char a = 'A';
-		for (int j=1; j<= output.size(); j++) {
+		for (int j=1; j<= output.size(); j++) { // Draws output characters (1's and 0's)
 			if (output[j-1]) {
 				a='1';
 			}

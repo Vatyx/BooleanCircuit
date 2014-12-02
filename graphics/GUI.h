@@ -1,3 +1,14 @@
+/*
+   GUI.h
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Definition of the GUI class. Handles button data and input fields.
+//
+
 #ifndef GUI_H
 #define GUI_H
 

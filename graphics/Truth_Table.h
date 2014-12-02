@@ -1,3 +1,14 @@
+/*
+   Truth_Table.h
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Draws the truth table window and updates the values as gates are entered.
+//
+
 #ifndef TRUTH
 #define TRUTH
 

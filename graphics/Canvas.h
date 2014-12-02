@@ -1,3 +1,14 @@
+/*
+   Canvas.h
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Implementation of Canvas class and circuit vector.
+//
+
 #ifndef CANVAS
 #define CANVAS
 

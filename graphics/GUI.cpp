@@ -1,10 +1,21 @@
+/*
+   GUI.cpp
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Implementation of the GUI class. Handles button data and input fields.
+//
+
 #include "Truth_Table.h"
 using namespace std;
 
 GUI::GUI(int X, int Y, int W, int H, const char*L) : Fl_Widget(X,Y,W,H,L){
 	gate_button = 0;
 
-	and_button = new Button(0,Y,H,H,"AND");
+	and_button = new Button(0,Y,H,H,"AND"); //Instantiates all the buttons
 	and_button->set_parent(this);
 	((Fl_Button*)and_button)->callback((Fl_Callback*)and_callback);
 	
@@ -43,17 +54,13 @@ GUI::GUI(int X, int Y, int W, int H, const char*L) : Fl_Widget(X,Y,W,H,L){
 	gen_button->set_parent(this);
 	((Fl_Button*)gen_button)->callback((Fl_Callback*)gen_callback);
 	
-	int yy = 500;
-	int ww = 1600;
-	int hh = 300;
 	for (int i=0;i<8;++i) {
-		//string s = "Input " + to_string(i+1);
-		Fl_Input* input = new Fl_Input(ww-64,i*((int)(hh/8.0)) + yy,64,(int)(hh/8.0),"");
+		Fl_Input* input = new Fl_Input(w()-64,i*((int)(300/8.0)) + 500,64,(int)(300/8.0),"");
 		inputs.push_back(input);
 	}
 }
 
-void GUI::draw() {
+void GUI::draw() { // draws widgets
 	fl_color(fl_rgb_color(128,128,128));
 	fl_rectf(x(), y(), w(), h());
 	((Fl_Widget*)and_button)->redraw();
@@ -67,9 +74,7 @@ void GUI::draw() {
 	((Fl_Widget*)load_button)->redraw();
 	((Fl_Widget*)save_button)->redraw();
 	((Fl_Widget*)gen_button)->redraw();
-	//for (int i=0;i<inputs.size();++i) {
-		//inputs[i]->redraw();
-	//}
+
 	fl_color(fl_rgb_color(255,255,255));
 	if (message.size()>0) {
 		fl_draw(message.c_str(), (w()-64) - message.size()*12, y()+36);

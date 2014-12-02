@@ -1,10 +1,21 @@
+/*
+   Gate.h
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// This is the definition of the graphical gates to be drawn on the canvas.
+//
+
 #ifndef GATE_H
 #define GATE_H
 
 #include "Helper_Functions.h"
 using namespace std;
 
-struct Point {
+struct Point { //Point class was included to test the significance of a dedicated class for passing vector data.
 	int x;
 	int y;
 	Point(){x=0;y=0;}
@@ -13,19 +24,19 @@ struct Point {
 		y = yy;
 	}
 };
-//Point Operators
+//This Point class was derived from a version used in Principles and Practice Using C++" by Bjarne Stroustrup
 inline bool operator==(Point a, Point b) { return a.x==b.x && a.y==b.y; } 
 inline bool operator!=(Point a, Point b) { return !(a==b); }
 
 //-----------------------------------------------------------------------
 
-class Gate{
+class Gate{ //Stores information on graphical gates and their outputs.
 	bool accepted;
 	Point pos;
 	vector<bool> output;
 	Canvas* parent;
 public:
-	Gate(Point p, Canvas* pa, const char* L=0){//Constructor
+	Gate(Point p, Canvas* pa, const char* L=0){
 		pos = p;
 		parent = pa;
 		accepted = true;
@@ -38,13 +49,15 @@ public:
 	Point Pos(){return pos;}
 	bool Accepted() {return accepted;}
 	void set_accepted(bool a) {accepted = a;}
-//protected:
 	Canvas* Parent() {return parent;}
 	void set_parent(Canvas* p) {parent = p;}
-	//Gate(){};
 };
 
 //-----------------------------------------------------------------------
+// The following child classes of the Gate subclass add gate inputs
+// and output calculations.
+//-----------------------------------------------------------------------
+ 
 
 class And_Gate : public Gate {
 	Gate* input1;
@@ -53,7 +66,6 @@ class And_Gate : public Gate {
 	Fl_PNG_Image *AND_gray;
 	Canvas *parent;
 public:
-	//And_Gate(){}
 	And_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa);
 	void draw();
 	void cal_output();
@@ -69,7 +81,6 @@ class Or_Gate : public Gate {
 	Fl_PNG_Image *OR;
 	Fl_PNG_Image *OR_gray;
 public:
-	//Or_Gate(){}
 	Or_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa);
 	void draw();
 	void cal_output();
@@ -84,7 +95,6 @@ class Not_Gate : public Gate {
 	Fl_PNG_Image *NOT;
 	Fl_PNG_Image *NOT_gray;
 public:
-	//Not_Gate(){}
 	Not_Gate(Point p, Gate* i1, Canvas* pa);
 	void draw();
 	void cal_output();

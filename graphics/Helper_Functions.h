@@ -1,3 +1,14 @@
+/*
+   Helper_Functions.h
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Forward declaration of helper functions.
+//
+
 #ifndef HELPER
 #define HELPER
 

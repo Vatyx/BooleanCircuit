@@ -1,7 +1,18 @@
+/*
+   Gate.cpp
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// This is the implementation of the graphical gates to be drawn on the canvas.
+//
+
 #include "Truth_Table.h"
 using namespace std;
 
-Gate::Gate(Point p, vector<bool>* out, Canvas* pa, const char* L){//Constructor
+Gate::Gate(Point p, vector<bool>* out, Canvas* pa, const char* L){
 	pos = p;
 	for (int i=0;i< (*out).size();++i) {
 		output.push_back((*out)[i]);
@@ -9,25 +20,11 @@ Gate::Gate(Point p, vector<bool>* out, Canvas* pa, const char* L){//Constructor
 	accepted = true;
 	parent = pa;
 }
-void Gate::draw() {
+void Gate::draw() { // Draws the default gate structure (a rectangle and its output)
 	fl_color(fl_rgb_color(0,79,255));
 	fl_line_style(FL_SOLID, 4);
 	fl_line(pos.x + Parent()->x(), pos.y + Parent()->y(), Fl::w()-1, pos.y + Parent()->y());
 	fl_rectf(pos.x+Parent()->x()-16,pos.y+Parent()->y()-16,32,32);
-	draw_output();
-}
-void Gate::draw_output() {
-	fl_color(FL_BLACK);
-	char a = 'A';
-	for (int i=0; i< output.size(); i++) {
-		if (output[i]) {
-			a='1';
-		}
-		else {
-			a='0';
-		}
-		fl_draw(&a, 1, pos.x, (Fl::h()/2)+((i+1)*16));
-	}
 }
 void Gate::set_output(vector<bool>* out) {
 	output.clear();
@@ -47,7 +44,6 @@ And_Gate::And_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa): Gate(p, pa) {
 }
 void And_Gate::draw() {
 	cal_output();
-	Gate::draw_output();
 	int x = Parent()->x() + Gate::Pos().x;
 	int y = Parent()->y() + Gate::Pos().y;
 	
@@ -92,7 +88,6 @@ Or_Gate::Or_Gate(Point p, Gate* i1, Gate* i2, Canvas* pa): Gate(p, pa) {
 }
 void Or_Gate::draw() {
 	cal_output();
-	Gate::draw_output();
 	int x = Parent()->x() + Gate::Pos().x;
 	int y = Parent()->y() + Gate::Pos().y;
 	
@@ -135,7 +130,6 @@ Not_Gate::Not_Gate(Point p, Gate* i1, Canvas* pa): Gate(p, pa) {
 }
 void Not_Gate::draw() {
 	cal_output();
-	Gate::draw_output();
 	int x = Parent()->x() + Gate::Pos().x;
 	int y = Parent()->y() + Gate::Pos().y;
 	

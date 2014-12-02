@@ -1,3 +1,14 @@
+/*
+   Canvas.cpp
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Handles the drawing of circuit gates.
+//
+
 #include "Truth_Table.h"
 using namespace std;
 
@@ -21,7 +32,7 @@ Canvas::Canvas(int X, int Y, int W, int H, Fl_Scroll* sc, const char*L): Fl_Widg
 	gates.push_back(new Gate(Point(192,144),&out,this));
 
 }
-void Canvas::add_gate(int gate, Gate* input1, Gate* input2) {
+void Canvas::add_gate(int gate, Gate* input1, Gate* input2) { //Handles adding And and Or gates
 	Gate* last_gate = gates[gates.size()-1];
 	switch (gate) {
 		case 0 : gates.push_back(new And_Gate(Point(last_gate->Pos().x+64,last_gate->Pos().y+48),input1,input2,this)); break;
@@ -30,7 +41,7 @@ void Canvas::add_gate(int gate, Gate* input1, Gate* input2) {
 	}
 	Resize();
 }
-void Canvas::add_gate(int gate, Gate* input) {
+void Canvas::add_gate(int gate, Gate* input) { //Handles adding Not gates
 	Gate* last_gate = gates[gates.size()-1];
 	switch (gate) {
 		case 0 : gates.push_back(new Not_Gate(Point(last_gate->Pos().x+64,last_gate->Pos().y+48),input,this)); break;
@@ -38,7 +49,7 @@ void Canvas::add_gate(int gate, Gate* input) {
 	}
 	Resize();
 }
-void Canvas::add_gate(int gate) {
+void Canvas::add_gate(int gate) { // handles default gates
 	Gate* last_gate = gates[gates.size()-1];
 	switch (gate) {
 		case 0 : 
@@ -50,7 +61,7 @@ void Canvas::add_gate(int gate) {
 	}
 	Resize();
 }
-void Canvas::draw() {
+void Canvas::draw() { //draws canvas
 	if (table!= NULL){
 		table->redraw();
 	}
@@ -66,10 +77,9 @@ void Canvas::draw() {
 	if (gui!= NULL){
 		gui->draw();
 	}
-	//cout<<"Drawing Canvas"<< Fl_Widget::y()<< "\n";
 }
 
-void Canvas::Resize() {
+void Canvas::Resize() { // Resizes the canvas
 	if (num_gates()>=9)
 		Fl_Widget::size(parent->w() + 64*(num_gates()-9),parent->h() + 48*(num_gates()-9));
 	if (parent->xposition() > (w() - parent->w())) {
@@ -95,7 +105,7 @@ void Canvas::generate_circuit() {
 	vector<bool> c = Gates()->operator[](2)->get_output();
 	
 	vector<bool> output;
-	for (int i=0;i<8;++i) {
+	for (int i=0;i<8;++i) { //check to see if inputs are valid
 		int input;
 		sscanf(get_gui()->get_input(i)->value(), "%d", &input);
 		if (input<0 || input>1) {
@@ -106,15 +116,27 @@ void Canvas::generate_circuit() {
 		output.push_back(input != 0);
 	}
 	
-	while (Gates()->size()>3){
+	while (Gates()->size()>3){//delete existing gates
 		Gates()->erase(Gates()->end() - 1);
 	}
 	
-	vector<bool> nots {false,false,false};
-	vector<vector<int>> ands;
+	bool all_zeros = true; // Checks if all the inputs are zero
+	for (auto i: output) { //    <------------ THIS IS WHERE WE USED AUTO
+		if (i != 0) all_zeros = false; // 	   AND RANGED-BASED FOR LOOP
+	}
+	if (all_zeros) {
+		add_gate(0,get_gate(2));
+		add_gate(0,get_gate(2),get_gate(3));
+		parent->redraw();
+		get_table()->get_scroll()->redraw();
+		return;
+	}
 	
-	for (int i=0; i<8;++i) {
-		if (output[i]) {
+	vector<bool> nots {false,false,false}; //Checks redundant creation of not gates
+	vector<vector<int>> ands; //Determines the number of tertiary and gates required
+	
+	for (auto i: {0,1,2,3,4,5,6,7}) { //    <------------ THIS IS WHERE WE USED AUTO
+		if (output[i]) { //                               AND RANGED-BASED FOR LOOP
 			vector<int> g_positions = {0,0,0};
 			if (!a[i]) {
 				nots[0] = true;
@@ -142,14 +164,14 @@ void Canvas::generate_circuit() {
 	}
 
 	int num_nots = 0;
-	for (int i=0;i<3; ++i) {
+	for (int i=0;i<3; ++i) { //Generates not gates
 		if (nots[i] == true) {
 			add_gate(0,get_gate(i));
 			++num_nots;
 		}
 	}
 	
-	for (int i=0;i<ands.size();++i) {
+	for (int i=0;i<ands.size();++i) { // Generates Tertiary And gates
 		if (ands[i][1] == 4 && nots[0] == false)
 			add_gate(0,get_gate(ands[i][0]),get_gate(3));
 		else if (ands[i][1] == 4 && nots[0] == true)
@@ -163,7 +185,7 @@ void Canvas::generate_circuit() {
 			add_gate(0,get_gate(3+num_nots+(i*2)),get_gate(ands[i][2] - (3-num_nots)));
 	}
 	if (ands.size()>1) {
-		add_gate(1,get_gate(4+num_nots),get_gate(6+num_nots));
+		add_gate(1,get_gate(4+num_nots),get_gate(6+num_nots)); //Generates ending Or gates
 	}
 	for (int i=2;i<ands.size();++i) {
 		add_gate(1,get_gate(2+num_nots+((i+1)*2)),get_gate(num_gates()-1));

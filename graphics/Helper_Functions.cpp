@@ -1,3 +1,14 @@
+/*
+   Helper_Functions.cpp
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Handles button callbacks and input events/drawing.
+//
+
 #include "Truth_Table.h"
 using namespace std;
 
@@ -21,8 +32,8 @@ bool check_Gate_Input(int i, Canvas* canvas) {
 	return true;
 }
 
-void and_callback(Fl_Widget* widget, void*) {
-	GUI* gui = ((Button*)widget)->Parent();
+void and_callback(Fl_Widget* widget, void*) { // And Button Callback
+	GUI* gui = ((Button*)widget)->Parent();//    -Sets next active gate to type And
 	Canvas* canvas = gui->Parent();
 	
 	int i1;
@@ -48,8 +59,8 @@ void and_callback(Fl_Widget* widget, void*) {
 	
 }
 
-void or_callback(Fl_Widget* widget, void*) {
-	GUI* gui = ((Button*)widget)->Parent();
+void or_callback(Fl_Widget* widget, void*) { // Or Button Callback
+	GUI* gui = ((Button*)widget)->Parent();//   -Sets next active gate to type Or
 	Canvas* canvas = gui->Parent();
 	
 	int i1;
@@ -74,8 +85,8 @@ void or_callback(Fl_Widget* widget, void*) {
 	gui->redraw();
 }
 
-void not_callback(Fl_Widget* widget, void*) {
-	GUI* gui = ((Button*)widget)->Parent();
+void not_callback(Fl_Widget* widget, void*) { // Not Button Callback
+	GUI* gui = ((Button*)widget)->Parent();//    -Sets next active gate to type Not
 	Canvas* canvas = gui->Parent();
 	
 	int i1;
@@ -98,15 +109,16 @@ void not_callback(Fl_Widget* widget, void*) {
 	gui->redraw();
 }
 
-void check_callback(Fl_Widget* widget, void*) {
-	
+void check_callback(Fl_Widget* widget, void*) { // Check Button Callback
+												// -Checks the users desired output with the
+												// -output of the last gate.
 	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
 	GUI* gui = ((Button*)widget)->Parent();
 	Gate* last_gate = canvas->Gates()->operator[](canvas->Gates()->size()-1);
 	vector<bool> last_output = last_gate->get_output();
 	
-	for (int i=0;i<8;i++) {
-		string input = gui->get_input(i)->value();
+	for (auto i: {0,1,2,3,4,5,6,7}) { //    <------------ THIS IS WHERE WE USED AUTO 
+		string input = gui->get_input(i)->value();//      AND A RANGED-BASED FOR LOOP
 		bool in = false;
 		if (input == "0"){
 			in = false;}
@@ -127,8 +139,8 @@ void check_callback(Fl_Widget* widget, void*) {
 	gui->redraw();
 }
 
-void remove_callback(Fl_Widget* widget, void*) {
-	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
+void remove_callback(Fl_Widget* widget, void*) { 			// Remove Button Callback
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent(); // -Removes the last active gate
 	canvas->get_gui()->Input1()->activate();
 	canvas->get_gui()->Input2()->activate();
 	canvas->Resize();
@@ -139,8 +151,8 @@ void remove_callback(Fl_Widget* widget, void*) {
 	canvas->Parent()->redraw();
 }
 
-void accept_callback(Fl_Widget* widget, void*) {
-	GUI* gui = ((Button*)widget)->Parent();
+void accept_callback(Fl_Widget* widget, void*) { // Accept Button Callback
+	GUI* gui = ((Button*)widget)->Parent();		 // -Accepts the user's gate selection
 	gui->Input1()->activate();
 	gui->Input2()->activate();
 	if (gui->Parent()->Accepted())
@@ -151,7 +163,7 @@ void accept_callback(Fl_Widget* widget, void*) {
 	gui->Parent()->Parent()->redraw();
 }
 
-int int_from_string(string s, int pos) {
+int int_from_string(string s, int pos) { // Finds the nth integer within a string
 	int output = 0;
 	bool reading = false;
 	int reading_point = 0;
@@ -186,7 +198,7 @@ int int_from_string(string s, int pos) {
 	return output-1;
 }
 
-void createGates(const char* filepath, Canvas* canvas) {
+void createGates(const char* filepath, Canvas* canvas) { // Creates gates from a text file
 	string line;
 	int a,b;
 	ifstream data_in;
@@ -212,8 +224,8 @@ void createGates(const char* filepath, Canvas* canvas) {
 	canvas->get_table()->get_scroll()->redraw();
 }
 
-void load_callback(Fl_Widget* widget, void*) {
-	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
+void load_callback(Fl_Widget* widget, void*) {  			// Load Button Callback
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent(); // -Loads circuit from a text file
 	Fl_File_Chooser chooser(".", "*.txt", Fl_File_Chooser::SINGLE, "Title Of Chooser");
 	chooser.show();
 	while(chooser.shown())
@@ -240,8 +252,8 @@ int find_gate_id(Canvas* canvas, Gate* gate) {
 	return -1;
 }
 
-void save_callback(Fl_Widget* widget, void*) {
-	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
+void save_callback(Fl_Widget* widget, void*) { 				// Save Button Callback
+	Canvas* canvas = ((Button*)widget)->Parent()->Parent();	// Saves user's circuit to a text file
 	
 	const char* path = fl_file_chooser("Enter name and directory", "*.txt","Goober.txt",0);
 	cout << path<<"\n";
@@ -269,8 +281,8 @@ void save_callback(Fl_Widget* widget, void*) {
 	file.close();
 }
 
-void gen_callback(Fl_Widget* widget, void*) {
-	
+void gen_callback(Fl_Widget* widget, void*) { // Generate Button Callback
+											  // -Creates a circuit from the user's desired output
 	Canvas* canvas = ((Button*)widget)->Parent()->Parent();
 	GUI* gui = ((Button*)widget)->Parent();
 	Gate* last_gate = canvas->Gates()->operator[](canvas->Gates()->size()-1);

@@ -1,7 +1,19 @@
+/*
+   main.cpp
+   Steven G. Leal		November 23, 2014
+   Ryan Meyers
+   Sahil Dhanju
+*/
+
+//
+// Begins the program by opening the main window and starts the event handling.
+//
+
+
 #include "Truth_Table.h"
 
 using namespace std;
-int main() {
+int main() { 
 	Fl_Double_Window win(1600,900,"Gates");
 		Fl_Scroll scroll1(0,0,win.w(),500);
 		scroll1.type(Fl_Scroll::BOTH_ALWAYS);
